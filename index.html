@@ -1,0 +1,788 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Attendance Tracker</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f6fb;
+    color: #243047;
+}
+
+header {
+    background: #2457d6;
+    color: white;
+    padding: 22px 5%;
+}
+
+header h1 {
+    font-size: 27px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #e2eaff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 0 18px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #0000000b;
+}
+
+.stat-card p {
+    color: #667085;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.stat-card h2 {
+    font-size: 28px;
+    color: #2457d6;
+}
+
+.panel {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 12px #0000000b;
+}
+
+.panel h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d5dbe5;
+    border-radius: 7px;
+    font-size: 15px;
+    background: white;
+}
+
+input:focus, select:focus {
+    outline: 2px solid #b8ccff;
+    border-color: #2457d6;
+}
+
+button {
+    border: none;
+    padding: 11px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.primary {
+    background: #2457d6;
+    color: white;
+}
+
+.primary:hover {
+    background: #1945b7;
+}
+
+.secondary {
+    background: #e9efff;
+    color: #2457d6;
+}
+
+.danger {
+    background: #fee9e9;
+    color: #c62828;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.toolbar input {
+    max-width: 300px;
+}
+
+.date-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-control input {
+    width: auto;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+}
+
+th, td {
+    text-align: left;
+    padding: 14px 12px;
+    border-bottom: 1px solid #edf0f5;
+    font-size: 14px;
+}
+
+th {
+    background: #f7f9fd;
+    color: #566176;
+}
+
+td select {
+    min-width: 115px;
+    padding: 8px;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.percentage {
+    font-weight: bold;
+}
+
+.low {
+    color: #d12f2f;
+}
+
+.good {
+    color: #16834a;
+}
+
+.actions {
+    display: flex;
+    gap: 7px;
+}
+
+.actions button {
+    padding: 8px 10px;
+}
+
+.message {
+    color: #16834a;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #667085;
+}
+
+.note {
+    font-size: 13px;
+    color: #667085;
+    margin-top: 15px;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 22px;
+    color: #667085;
+    font-size: 13px;
+}
+
+@media (max-width: 850px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    header h1 {
+        font-size: 22px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-card h2 {
+        font-size: 24px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .toolbar input {
+        max-width: 100%;
+    }
+
+    .date-control {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .date-control input {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎓 Student Attendance Tracker</h1>
+    <p>Manage student records and track daily attendance easily.</p>
+</header>
+
+<main class="container">
+
+    <!-- Dashboard statistics -->
+    <section class="stats">
+        <div class="stat-card">
+            <p>Total Students</p>
+            <h2 id="totalStudents">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Present Today</p>
+            <h2 id="presentToday">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Absent Today</p>
+            <h2 id="absentToday">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Low Attendance</p>
+            <h2 id="lowAttendance">0</h2>
+        </div>
+    </section>
+
+    <!-- Add and edit student -->
+    <section class="panel">
+        <h2 id="formTitle">Add Student</h2>
+
+        <form id="studentForm">
+            <div class="form-grid">
+                <div>
+                    <label for="studentName">Student Name</label>
+                    <input id="studentName" type="text"
+                        placeholder="Enter student name" required>
+                </div>
+
+                <div>
+                    <label for="studentRoll">Roll Number</label>
+                    <input id="studentRoll" type="text"
+                        placeholder="Enter roll number" required>
+                </div>
+
+                <div>
+                    <label for="studentClass">Class / Department</label>
+                    <input id="studentClass" type="text"
+                        placeholder="e.g. CSE - II Year" required>
+                </div>
+
+                <div class="actions">
+                    <button class="primary" id="submitButton"
+                        type="submit">Add Student</button>
+                    <button class="secondary" id="cancelEdit"
+                        type="button" hidden>Cancel</button>
+                </div>
+            </div>
+        </form>
+
+        <p class="message" id="formMessage" role="status"></p>
+    </section>
+
+    <!-- Attendance management -->
+    <section class="panel">
+        <h2>Daily Attendance</h2>
+
+        <div class="toolbar">
+            <input type="search" id="searchInput"
+                placeholder="Search name or roll number..."
+                aria-label="Search students">
+
+            <div class="date-control">
+                <label for="attendanceDate">Select Date:</label>
+                <input type="date" id="attendanceDate">
+                <button class="secondary" id="todayButton"
+                    type="button">Today</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Attendance</th>
+                        <th>Percentage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable"></tbody>
+            </table>
+        </div>
+
+        <p class="note">
+            Attendance is saved automatically when you change a student's
+            status. Attendance percentage = Present days / Recorded
+            attendance days × 100. Unmarked days are not counted.
+            Students below 75% are flagged as low attendance.
+        </p>
+
+        <p class="message" id="attendanceMessage"
+            role="status" aria-live="polite"></p>
+    </section>
+
+</main>
+
+<footer>
+    Student Attendance Tracker | HTML, CSS & JavaScript
+</footer>
+
+<script>
+const STORAGE_KEY = "studentAttendanceTracker_v1";
+
+let students = [];
+let editingId = null;
+
+const $ = id => document.getElementById(id);
+
+function loadData() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (saved) {
+            const data = JSON.parse(saved);
+
+            if (Array.isArray(data)) {
+                students = data.filter(s =>
+                    s &&
+                    typeof s.id === "string" &&
+                    typeof s.name === "string" &&
+                    typeof s.roll === "string" &&
+                    typeof s.className === "string" &&
+                    s.attendance &&
+                    typeof s.attendance === "object" &&
+                    !Array.isArray(s.attendance)
+                );
+            }
+        }
+    } catch (error) {
+        students = [];
+        alert("Saved data could not be read. Starting with an empty list.");
+    }
+}
+
+function saveData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+        return true;
+    } catch (error) {
+        alert("Unable to save data. Check your browser storage settings.");
+        return false;
+    }
+}
+
+function localDate(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+$("attendanceDate").value = localDate();
+
+function attendanceStats(student) {
+    const records = Object.values(student.attendance || {});
+    const recorded = records.filter(status =>
+        ["Present", "Absent", "Leave"].includes(status)
+    );
+
+    const present = recorded.filter(s => s === "Present").length;
+    const absent = recorded.filter(s => s === "Absent").length;
+    const leave = recorded.filter(s => s === "Leave").length;
+
+    return {
+        present,
+        absent,
+        leave,
+        total: recorded.length,
+        percentage: recorded.length
+            ? Math.round((present / recorded.length) * 100)
+            : null
+    };
+}
+
+function showMessage(id, message) {
+    $(id).textContent = message;
+}
+
+function render() {
+    const date = $("attendanceDate").value;
+    const search = $("searchInput").value.trim().toLowerCase();
+
+    const filtered = students.filter(student =>
+        student.name.toLowerCase().includes(search) ||
+        student.roll.toLowerCase().includes(search) ||
+        student.className.toLowerCase().includes(search)
+    );
+
+    $("totalStudents").textContent = students.length;
+
+    $("presentToday").textContent = students.filter(s =>
+        s.attendance[date] === "Present"
+    ).length;
+
+    $("absentToday").textContent = students.filter(s =>
+        s.attendance[date] === "Absent"
+    ).length;
+
+    $("lowAttendance").textContent = students.filter(s => {
+        const percentage = attendanceStats(s).percentage;
+        return percentage !== null && percentage < 75;
+    }).length;
+
+    const tbody = $("studentTable");
+    tbody.replaceChildren();
+
+    if (filtered.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+
+        td.colSpan = 6;
+        td.className = "empty";
+        td.textContent = students.length
+            ? "No matching students found."
+            : "No students added yet. Use the form above to add a student.";
+
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+    }
+
+    filtered.forEach(student => {
+        const tr = document.createElement("tr");
+        const stats = attendanceStats(student);
+
+        addCell(tr, student.roll);
+        addCell(tr, student.name);
+        addCell(tr, student.className);
+
+        // Attendance status dropdown
+        const statusCell = document.createElement("td");
+        const select = document.createElement("select");
+
+        select.setAttribute("aria-label",
+            "Attendance for " + student.name);
+
+        const options = [
+            ["", "Not Marked"],
+            ["Present", "Present"],
+            ["Absent", "Absent"],
+            ["Leave", "Leave"]
+        ];
+
+        options.forEach(([value, label]) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            select.appendChild(option);
+        });
+
+        select.value = student.attendance[date] || "";
+
+        select.addEventListener("change", () => {
+            const previous = student.attendance[date];
+            const next = select.value;
+
+            if (next) {
+                student.attendance[date] = next;
+            } else {
+                delete student.attendance[date];
+            }
+
+            if (!saveData()) {
+                if (previous) {
+                    student.attendance[date] = previous;
+                } else {
+                    delete student.attendance[date];
+                }
+
+                render();
+                return;
+            }
+
+            showMessage("attendanceMessage",
+                `${student.name}: ${next || "Not Marked"} saved for ${date}.`);
+
+            render();
+        });
+
+        statusCell.appendChild(select);
+        tr.appendChild(statusCell);
+
+        // Attendance percentage
+        const percentageCell = document.createElement("td");
+        percentageCell.className = "percentage";
+
+        if (stats.percentage === null) {
+            percentageCell.textContent = "N/A";
+        } else {
+            percentageCell.textContent = stats.percentage + "%";
+            percentageCell.classList.add(
+                stats.percentage < 75 ? "low" : "good"
+            );
+        }
+
+        tr.appendChild(percentageCell);
+
+        // Edit and delete buttons
+        const actionCell = document.createElement("td");
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editButton = document.createElement("button");
+        editButton.className = "secondary";
+        editButton.textContent = "Edit";
+        editButton.type = "button";
+        editButton.addEventListener("click", () => editStudent(student.id));
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "danger";
+        deleteButton.textContent = "Delete";
+        deleteButton.type = "button";
+        deleteButton.addEventListener("click", () =>
+            deleteStudent(student.id)
+        );
+
+        actions.append(editButton, deleteButton);
+        actionCell.appendChild(actions);
+        tr.appendChild(actionCell);
+
+        tbody.appendChild(tr);
+    });
+}
+
+function addCell(row, value) {
+    const td = document.createElement("td");
+    td.textContent = value;
+    row.appendChild(td);
+}
+
+$("studentForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const name = $("studentName").value.trim();
+    const roll = $("studentRoll").value.trim();
+    const className = $("studentClass").value.trim();
+
+    if (!name || !roll || !className) {
+        showMessage("formMessage", "Please fill in all fields.");
+        return;
+    }
+
+    const duplicate = students.some(s =>
+        s.roll.toLowerCase() === roll.toLowerCase() &&
+        s.id !== editingId
+    );
+
+    if (duplicate) {
+        showMessage("formMessage",
+            "This roll number already exists. Enter a unique roll number.");
+        return;
+    }
+
+    if (editingId) {
+        const student = students.find(s => s.id === editingId);
+
+        if (!student) {
+            editingId = null;
+            showMessage("formMessage", "Student not found. Please try again.");
+            return;
+        }
+
+        const old = {
+            name: student.name,
+            roll: student.roll,
+            className: student.className
+        };
+
+        Object.assign(student, { name, roll, className });
+
+        if (!saveData()) {
+            Object.assign(student, old);
+            return;
+        }
+
+        showMessage("formMessage", "Student details updated successfully.");
+    } else {
+        const student = {
+            id: makeId(),
+            name,
+            roll,
+            className,
+            attendance: {}
+        };
+
+        students.push(student);
+
+        if (!saveData()) {
+            students = students.filter(s => s.id !== student.id);
+            return;
+        }
+
+        showMessage("formMessage", "Student added successfully.");
+    }
+
+    resetForm();
+    render();
+});
+
+function makeId() {
+    if (window.crypto && window.crypto.randomUUID) {
+        return window.crypto.randomUUID();
+    }
+
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2);
+}
+
+function editStudent(id) {
+    const student = students.find(s => s.id === id);
+    if (!student) return;
+
+    editingId = id;
+
+    $("studentName").value = student.name;
+    $("studentRoll").value = student.roll;
+    $("studentClass").value = student.className;
+
+    $("formTitle").textContent = "Edit Student";
+    $("submitButton").textContent = "Save Changes";
+    $("cancelEdit").hidden = false;
+
+    $("studentName").focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function deleteStudent(id) {
+    const student = students.find(s => s.id === id);
+    if (!student) return;
+
+    if (!confirm(`Delete ${student.name} and all their attendance records?`)) {
+        return;
+    }
+
+    const oldStudents = students;
+    students = students.filter(s => s.id !== id);
+
+    if (!saveData()) {
+        students = oldStudents;
+        return;
+    }
+
+    if (editingId === id) resetForm();
+
+    showMessage("attendanceMessage", "Student deleted successfully.");
+    render();
+}
+
+function resetForm() {
+    editingId = null;
+    $("studentForm").reset();
+    $("formTitle").textContent = "Add Student";
+    $("submitButton").textContent = "Add Student";
+    $("cancelEdit").hidden = true;
+}
+
+$("cancelEdit").addEventListener("click", resetForm);
+
+$("searchInput").addEventListener("input", render);
+
+$("attendanceDate").addEventListener("change", () => {
+    showMessage("attendanceMessage", "");
+    render();
+});
+
+$("todayButton").addEventListener("click", () => {
+    $("attendanceDate").value = localDate();
+    showMessage("attendanceMessage", "");
+    render();
+});
+
+// Load previously saved records and display the dashboard.
+loadData();
+render();
+</script>
+
+</body>
+</html>
